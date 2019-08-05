@@ -10,14 +10,15 @@ class Customers(Resource):
         result = models.customers_schema.dump(all_customers)
         return jsonify(result.data)
 
+    def post(self):
+        pass
 
 # Customer resource
 class Customer(Resource):
     def get(self, customer_id):
-        return models.Customer.query.get_or_404(customer_id)
-
-    def post(self, customer_id):
-        pass
+        customer = models.Customer.query.get_or_404(customer_id)
+        result = models.customer_schema.dump(customer)
+        return jsonify(result.data)
 
     def put(self, customer_id):
         pass
@@ -29,15 +30,17 @@ class Websites(Resource):
         all_websites = models.Website.query.all()
         result = models.websites_schema.dump(all_websites)
         return jsonify(result.data)
+    
+    def post(self):
+        pass
 
 
 # Website resource
 class Website(Resource):
     def get(self, website_id):
-        return models.Website.query.get_or_404(website_id)
-
-    def post(self, website_id):
-        pass
+        website = models.Website.query.get_or_404(website_id)
+        result = models.website_schema.dump(website)
+        return jsonify(result.data)
 
     def put(self, website_id):
         pass
@@ -49,15 +52,17 @@ class Plans(Resource):
         all_plans = models.Plan.query.all()
         result = models.plans_schema.dump(all_plans)
         return jsonify(result.data)
+    
+     def post(self):
+        pass
 
 
 # Plan resource
 class Plan(Resource):
     def get(self, plan_id):
-        return models.Plan.query.get_or_404(plan_id)
-
-    def post(self, plan_id):
-        pass
+        plan = models.Plan.query.get_or_404(plan_id)
+        result = models.plan_schema.dump(plan)
+        return jsonify(result.data)
 
     def put(self, plan_id):
         pass

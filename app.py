@@ -6,7 +6,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 
-
 db = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
@@ -21,23 +20,21 @@ def create_app(config=None):
     else:
         app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://localhost/subscript"
 
-    db = SQLAlchemy(app)
     api = Api(app)
-    
-
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
 
-    from resources import Customer, Customers, Website, Websites, Plan, Plans 
+    from resources import Customer, Customers, Website, Websites, Plan, Plans
 
     # api default routes
     api.add_resource(Customers, "/customers", endpoint="customers")
     api.add_resource(Customer, "/customers/<int:customer_id>", endpoint="customer")
 
     api.add_resource(Websites, "/websites", endpoint="websites")
-    api.add_resource(Customer, "/websites/<int:website_id>", endpoint="website")
+    api.add_resource(Website, "/websites/<int:website_id>", endpoint="website")
 
     api.add_resource(Plans, "/plans", endpoint="plans")
+    api.add_resource(Plan, "/plans/<int:plan_id>", endpoint="plan")
 
     return app

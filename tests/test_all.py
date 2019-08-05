@@ -25,7 +25,7 @@ class TestListResources(object):
         ("/websites", Website, 9, STATUS_OK),
         ("/plans", Plan, 3, STATUS_OK),
     ])
-    def test_get(self, db, test_client, sample_data, endpoint, model_cls, expected_length, expected_status):
+    def test_get(self, db, test_client, endpoint, model_cls, expected_length, expected_status):
         response = test_client.get(endpoint)
 
         # check for expected status
@@ -40,19 +40,43 @@ class TestListResources(object):
         for model_data in data:
             model = model_cls(**model_data)
                     
-# customer tests
-class TestCustomerModel(object):
-    def test(self):
-        pass
 
-class TestCustomerModelResource(object):
-    def test_get(self):
-        pass
+class TestModelResources(object):
+    @pytest.mark.parametrize("endpoint, model_cls, model_id, expected_status", [
+        ("/customers/{}", Customer, 1, STATUS_OK),
+        ("/customers/{}", Customer, 6, STATUS_OK),
+        ("/customers/{}", Customer, 100, STATUS_NOT_FOUND),
+        ("/plans/{}", Plan, 1, STATUS_OK),
+        ("/plans/{}", Plan, 2, STATUS_OK),
+        ("/plans/{}", Plan, 3, STATUS_OK),
+        ("/plans/{}", Plan, 100, STATUS_NOT_FOUND),
+        ("/websites/{}", Website, 1, STATUS_OK),
+        ("/websites/{}", Website, 9, STATUS_OK),
+        ("/websites/{}", Website, 100, STATUS_NOT_FOUND),
+    ])
+    def test_get(self, db, test_client, sample_data, endpoint, model_cls, model_id, expected_status):
+        response = test_client.get(endpoint.format(model_id))
+
+        # check for expected status
+        assert response.status_code == expected_status, "endpoint did not return expected status: status {0}: expected_status {1}".format(response.status_code, expected_status)
+
+        if expected_status == STATUS_OK: 
+            # make sure its valid json
+            data = json.loads(response.data)
+
+            model_cls(**data)
+
 
     def test_post(self):
         pass
 
     def test_put(self):
+        pass
+
+
+# customer tests
+class TestCustomerModel(object):
+    def test(self):
         pass
 
 
@@ -62,29 +86,7 @@ class TestWebsiteModel(object):
         pass
 
 
-class TestWebsiteModelResource(object):
-    def test_get(self):
-        pass
-
-    def test_post(self):
-        pass
-
-    def test_put(self):
-        pass
-
-
 # plan tests
 class TestPlanModel(object):
     def test(self):
-        pass
-
-
-class TestPlanModelResource(object):
-    def test_get(self):
-        pass
-
-    def test_post(self):
-        pass
-
-    def test_put(self):
         pass
