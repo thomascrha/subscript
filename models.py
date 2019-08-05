@@ -83,10 +83,51 @@ class Customer(ModelMixin, db.Model):
     )
     websites = db.relationship("CustomerWebsites")
 
+    @property
+    def expired(self):
+        return False if self.renewal_date < datetime.datetime.now() else True
+
+    @property
+    def site_allowance(self):
+        return Plan.query.get(self.plan_id).site_allowance
+
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Customer %r>' % self.username
 
+    def add_website(self, website_url):
+        if len(self.websites) == self.site_allowance:
+            raise ValueError("Unable to add another site you have reached \
+                your limit of {0}".format(self.site_allowance))
+
+        website = Website.query.filter_by(url=website_url).one()
+        customer_website = CustomerWebsites.create_and_add({
+            "website_id": website.id,
+            "plan_id": self.plan_id
+        })
+
+        self.websites.append(customer_website)
+        db.session.flush()
+
+    def remove_website(self, website_url):
+        website = Website.query.filter_by(url=website_url).one()
+        self.websites.remove(website.id)
+        db.session.flush()
+
+    def renew_plan(self):
+        self.renewal_date = datetime.datetime.now() + Plan.subscription_time
+        db.session.flush()
+
+    def change_plan(self, plan_name):
+        plan = Plan.query.filter_by(name=plan_name)
+        # check new plan is compatible with number of sites
+        _allowance = (self.site_allowance - plan.site_allowance) + 1
+
+        if _allowance >= 1:
+            raise ValueError("You can't switch to that plan until you remove \
+                {0} website from you current plan".format(_allowance))
+
+        self.plan_id = plan.id
 
 class CustomerWebsites(ModelMixin, db.Model):
     customer_id = db.Column(
