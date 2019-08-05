@@ -1,5 +1,7 @@
 from dateutil.relativedelta import relativedelta
 import datetime
+from marshmallow import fields
+
 from app import db, ma
 
 
@@ -53,10 +55,10 @@ class Plan(ModelMixin, db.Model):
 
 
 class PlanSchema(ma.Schema):
-    id = ma.fields.Integer()
-    name = ma.fields.String()
-    price = ma.fields.Float()
-    site_allowance = ma.fields.Integer()
+    id = fields.Integer()
+    name = fields.String()
+    price = fields.Float()
+    site_allowance = fields.Integer()
 
 
 plan_schema = PlanSchema()
@@ -73,8 +75,8 @@ class Website(ModelMixin, db.Model):
 
 
 class WebsiteSchema(ma.Schema):
-    id = ma.fields.Integer()
-    url = ma.fields.String()
+    id = fields.Integer()
+    url = fields.String()
 
 
 website_schema = WebsiteSchema()
@@ -101,9 +103,9 @@ class Customer(ModelMixin, db.Model):
 
 
 class CustomerSchema(ma.Schema):
-    id = ma.fields.Integer()
-    username = ma.fields.String()
-    email_address = ma.fields.String()
+    id = fields.Integer()
+    username = fields.String()
+    email_address = fields.String()
     websites = ma.Nested(WebsiteSchema, many=True)
 
 
