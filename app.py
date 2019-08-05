@@ -32,7 +32,16 @@ def create_app(config=None):
     ma.init_app(app)
     migrate.init_app(app, db)
 
-    from resources import Customer, Customers, Website, Websites, Plan, Plans
+    from resources import (
+        Customer,
+        Customers,
+        CustomerWebsites,
+        CustomerPlan,
+        Website,
+        Websites,
+        Plan,
+        Plans
+    )
 
     # api default routes
     # customer
@@ -45,6 +54,16 @@ def create_app(config=None):
         Customer,
         "/customers/<int:customer_id>",
         endpoint="customer"
+    )
+    api.add_resource(
+        CustomerWebsites,
+        "/customers/<int:customer_id>/websites",
+        endpoint="customer_websites"
+    )
+    api.add_resource(
+        CustomerPlan,
+        "/customers/<int:customer_id>/plan",
+        endpoint="customer_plan"
     )
 
     # website

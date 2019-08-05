@@ -249,19 +249,98 @@ class TestModelResources(object):
         schema_cls().load(model)
 
 
-# customer tests
-class TestCustomerModel(object):
-    def test(self):
+# customer websites resource tests
+class TestCustomerWebsitesResource(object):
+    @pytest.mark.parametrize(
+        "endpoint, model_cls, schema_cls, model_id, data, fail, \
+            expected_status",
+        [
+            # fail - plan only allows single website
+            (
+                "/customers/{}/websites",
+                Customer,
+                CustomerSchema,
+                1,
+                {
+                    "websites": [
+                        {
+                            "url": "www.google.com"
+                        }
+                    ]
+                },
+                True,
+                None
+            ),
+            # fail - website doesn't exist
+            (
+                "/customers/{}/websites",
+                Customer,
+                CustomerSchema,
+                3,
+                {
+                    "websites": [
+                        {
+                            "url": "www.ajswed.com"
+                        }
+                    ]
+                },
+                False,
+                STATUS_NOT_FOUND
+            ),
+
+        ]
+    )
+    def test_put(
+        self,
+        db,
+        sample_data,
+        test_client,
+        endpoint,
+        model_cls,
+        schema_cls,
+        model_id,
+        data,
+        fail,
+        expected_status
+    ):
+        try:
+            response = test_client.put(
+                endpoint.format(model_id),
+                data=json.dumps(data),
+                content_type="application/json"
+            )
+        except ValueError:
+            if fail:
+                assert True
+            else:
+                assert False
+
+        if expected_status in (STATUS_OK, STATUS_NOT_FOUND):
+            # check for expected status
+            assert response.status_code == expected_status, "endpoint did not \
+                return expected status: status {0}: expected_status {1}"\
+                    .format(response.status_code, expected_status)
+
+            if expected_status == STATUS_OK:
+                # make sure its valid json
+                data = json.loads(response.data)
+                assert data == response.json
+
+                # the customer model can't intiate with
+                # websites so remove if present for validation
+                if "websites" in data:
+                    del data["websites"]
+
+                # check response contains model
+                model = model_cls(**data)
+                # validate data against schema
+                schema_cls().load(model)
+
+    def test_delete(self):
         pass
 
 
-# website tests
-class TestWebsiteModel(object):
-    def test(self):
-        pass
-
-
-# plan tests
-class TestPlanModel(object):
-    def test(self):
+# customer plan resource tests
+class TestCustomerPlanResource(object):
+    def test_put(self):
         pass

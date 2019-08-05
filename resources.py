@@ -48,13 +48,69 @@ class Customer(Resource):
         if "username" in data:
             customer.name = data["username"]
 
-        if "plan_id" in data:
-            customer.name = data["plan_id"]
-
         # update db with object
         db.session.flush()
 
         # serialise model
+        return models.customer_schema.jsonify(customer)
+
+
+class CustomerWebsites(Resource):
+    # add website(s)
+    def put(self, customer_id):
+        # check customer exists
+        customer = models.Customer.query.get_or_404(customer_id)
+
+        # get data
+        data = request.get_json()
+
+        assert "websites" in data
+
+        for website in data["websites"]:
+            assert "url" in website
+
+            customer.add_website(website["url"])
+
+        return models.customer_schema.jsonify(customer)
+
+    # remove website(s)
+    def delete(self, customer_id):
+        # check customer exists
+        customer = models.Customer.query.get_or_404(customer_id)
+
+        # get data
+        data = request.get_json()
+
+        assert "websites" in data
+
+        for website in data["websites"]:
+            assert "url" in website
+
+            customer.remove_website(website["url"])
+
+        return models.customer_schema.jsonify(customer)
+
+
+class CustomerPlan(Resource):
+    def put(self, customer_id):
+        # check customer exists
+        customer = models.Customer.query.get_or_404(customer_id)
+
+        # get data
+        data = request.get_json()
+
+        assert "type" in data
+        assert "plan_name" in data
+
+        if data["type"] == "renew":
+            customer.renew_plan()
+        elif data["type"] == "change":
+            customer.change_plan(data["plan_name"])
+        else:
+            raise ValueError(
+                "Unknown Plan action type {0}".format(data["type"])
+            )
+
         return models.customer_schema.jsonify(customer)
 
 

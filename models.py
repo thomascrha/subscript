@@ -1,6 +1,8 @@
 from dateutil.relativedelta import relativedelta
 import datetime
 from marshmallow import fields
+from flask import abort
+from sqlalchemy.orm.exc import NoResultFound
 
 from app import db, ma
 
@@ -100,7 +102,12 @@ class Customer(ModelMixin, db.Model):
             raise ValueError("Unable to add another site you have reached \
                 your limit of {0}".format(self.site_allowance))
 
-        website = Website.query.filter_by(url=website_url).one()
+        # if website doesn't exist return 404
+        try:
+            website = Website.query.filter_by(url=website_url).one()
+        except NoResultFound:
+            abort(404)
+
         customer_website = CustomerWebsites.create_and_add({
             "website_id": website.id,
             "plan_id": self.plan_id
@@ -120,6 +127,9 @@ class Customer(ModelMixin, db.Model):
 
     def change_plan(self, plan_name):
         plan = Plan.query.filter_by(name=plan_name)
+
+        if not plan:
+            raise ValueError("Unknown Plan {0}".format(plan_name))
         # check new plan is compatible with number of sites
         _allowance = (self.site_allowance - plan.site_allowance) + 1
 
@@ -128,6 +138,8 @@ class Customer(ModelMixin, db.Model):
                 {0} website from you current plan".format(_allowance))
 
         self.plan_id = plan.id
+        db.session.flush()
+
 
 class CustomerWebsites(ModelMixin, db.Model):
     customer_id = db.Column(
