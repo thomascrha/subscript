@@ -11,11 +11,13 @@
         "**/tmp": true,
         "**/dist": true,
         "**/static": true,
-        "*.pyc": true
+        "*.pyc": true,
+        "**/.pytest_cache": true,
     },
     "files.exclude" : {
         "*.pyc": true,
         "**/__pycache__": true,
+        "**/.pytest_cache": true,
     },
     // "editor.formatOnSave": true,
     "editor.rulers": [

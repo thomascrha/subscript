@@ -62,7 +62,3 @@ class Website(ModelMixin, db.Model):
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Website %r>' % self.url
-
-
-if __name__ == "__main__":
-    db.create_all()
