@@ -23,5 +23,6 @@
     "editor.rulers": [
         80,
         120
-    ]
+    ],
+    "python.pythonPath": "venv3/bin/python"
 }

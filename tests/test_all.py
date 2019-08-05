@@ -1,14 +1,13 @@
 import pytest
+import json
+from jsoncompare import jsoncompare
 from tests.sample_data import keys as _sample_data
 
 # resources
-from app import (
+from models import (
     Customer,
-    Customers,
     Website,
-    Websites,
     Plan,
-    Plans
 )
 
 # mime types
@@ -20,22 +19,25 @@ STATUS_BAD_REQUEST = 400
 STATUS_NOT_FOUND = 404
 
 
+class TestListResources(object):
+    @pytest.mark.parametrize("endpoint, model, expected_length, expected_status", [
+        ("/customers", Customer, 10, STATUS_OK),
+    ])
+    def test_get(self, db, test_client, sample_data, endpoint, model, expected_length, expected_status):
+        response = test_client.get(endpoint)
+
+        # check for expected status
+        assert response.status_code == expected_status, "endpoint did not return expected status: status {0}: expected_status {1}".format(response.status_code, expected_status)
+
+        # make sure its valid json
+        data = json.loads(response.data)
+
+        print(data)
+                    
 # customer tests
 class TestCustomerModel(object):
     def test(self):
         pass
-
-
-class TestCustomerListResource(object):
-    @pytest.mark.parametrize("customer_number, expected_status", [
-        (10, STATUS_OK),
-    ])
-    def test_get(self, db, test_client, sample_data, customer_number, expected_status):
-        customers = Customers.get()
-
-        assert customers.status_code == expected_status 
-        assert len(customers) == customer_number
-
 
 class TestCustomerModelResource(object):
     def test_get(self):
@@ -54,11 +56,6 @@ class TestWebsiteModel(object):
         pass
 
 
-class TestWebsiteListResource(object):
-    def test_get(self):
-        pass
-
-
 class TestWebsiteModelResource(object):
     def test_get(self):
         pass
@@ -73,11 +70,6 @@ class TestWebsiteModelResource(object):
 # plan tests
 class TestPlanModel(object):
     def test(self):
-        pass
-
-
-class TestPlanListResource(object):
-    def test_get(self):
         pass
 
 

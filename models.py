@@ -1,4 +1,4 @@
-from app import db 
+from app import db, ma 
 from dateutil.relativedelta import relativedelta
 
 
@@ -35,6 +35,15 @@ class Customer(ModelMixin, db.Model):
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Customer %r>' % self.username
+
+
+class CustomerSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ("id", "username", "email_address", "plan_id")
+
+customer_schema = CustomerSchema()
+customers_schema = CustomerSchema(many=True)
 
 
 class Plan(ModelMixin, db.Model):

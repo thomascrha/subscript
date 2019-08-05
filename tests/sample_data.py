@@ -123,8 +123,7 @@ def add_customers(db):
         username="test-user-1",
         email_address="test-user-1@subscript.com",
         password="12345",
-        plan_id=keys.get("plan_1_id"),
-        websites=keys.get("website_1_id")
+        plan_id=keys.get("plan_1_id")
     )
 
     customer_2 = Customer.create_and_add(
@@ -132,6 +131,7 @@ def add_customers(db):
         username="test-user-2",
         email_address="test-user-2@subscript.com",
         password="12345",
+        plan_id=keys.get("plan_2_id")
     )
 
     customer_3 = Customer.create_and_add(
@@ -139,6 +139,7 @@ def add_customers(db):
         username="test-user-3",
         email_address="test-user-3@subscript.com",
         password="12345",
+        plan_id=keys.get("plan_3_id")
     )
 
     customer_4 = Customer.create_and_add(
@@ -146,6 +147,7 @@ def add_customers(db):
         username="test-user-4",
         email_address="test-user-4@subscript.com",
         password="12345",
+        plan_id=keys.get("plan_1_id")
     )
 
     customer_5 = Customer.create_and_add(
@@ -153,6 +155,7 @@ def add_customers(db):
         username="test-user-5",
         email_address="test-user-5@subscript.com",
         password="12345",
+        plan_id=keys.get("plan_2_id")
     )
 
     customer_6 = Customer.create_and_add(
@@ -160,6 +163,7 @@ def add_customers(db):
         username="test-user-6",
         email_address="test-user-6@subscript.com",
         password="12345",
+        plan_id=keys.get("plan_3_id")
     )
 
     keys.add("customer_1_id", customer_1.id)
