@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+import datetime
 from app import db, ma
 
 
@@ -19,31 +20,22 @@ class ModelMixin(object):
         """
         model = cls.create(*args, **kwargs)
         db.session.add(model)
-        db.session.flush()
+        db.session.commit()
         return model
 
 
-class Customer(ModelMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email_address = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(50), nullable=False)
-
-    # relationships
-    plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'), nullable=False)
-
-    # simple repr for debugging purposes
-    def __repr__(self):
-        return '<Customer %r>' % self.username
-
-
-class CustomerSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "username", "email_address", "plan_id")
-
-
-customer_schema = CustomerSchema()
-customers_schema = CustomerSchema(many=True)
+class CustomerWebsites(ModelMixin, db.Model):
+    customer_id = db.Column(
+        db.Integer,
+        db.ForeignKey('customer.id'),
+        primary_key=True
+    )
+    website_id = db.Column(
+        db.Integer,
+        db.ForeignKey('website.id'),
+        primary_key=True
+    )
+    website = db.relationship("Website")
 
 
 class Plan(ModelMixin, db.Model):
@@ -52,6 +44,7 @@ class Plan(ModelMixin, db.Model):
     price = db.Column(db.Float, nullable=False)
     site_allowance = db.Column(db.Integer, nullable=False)
 
+    # store buisnes logic on plan as they are all the same
     subscription_time = relativedelta(years=1)
 
     # simple repr for debugging purposes
@@ -60,8 +53,10 @@ class Plan(ModelMixin, db.Model):
 
 
 class PlanSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "name", "price", "site_allowance")
+    id = ma.fields.Integer()
+    name = ma.fields.String()
+    price = ma.fields.Float()
+    site_allowance = ma.fields.Integer()
 
 
 plan_schema = PlanSchema()
@@ -78,9 +73,39 @@ class Website(ModelMixin, db.Model):
 
 
 class WebsiteSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "url")
+    id = ma.fields.Integer()
+    url = ma.fields.String()
 
 
 website_schema = WebsiteSchema()
 websites_schema = WebsiteSchema(many=True)
+
+
+class Customer(ModelMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email_address = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+
+    # relationships
+    plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'), nullable=False)
+    renewal_date = db.Column(
+        db.DateTime,
+        default=datetime.datetime.now() + Plan.subscription_time
+    )
+    websites = db.relationship("CustomerWebsites")
+
+    # simple repr for debugging purposes
+    def __repr__(self):
+        return '<Customer %r>' % self.username
+
+
+class CustomerSchema(ma.Schema):
+    id = ma.fields.Integer()
+    username = ma.fields.String()
+    email_address = ma.fields.String()
+    websites = ma.Nested(WebsiteSchema, many=True)
+
+
+customer_schema = CustomerSchema()
+customers_schema = CustomerSchema(many=True)

@@ -46,6 +46,8 @@ class TestListResources(object):
         # make sure its valid json
         data = json.loads(response.data)
 
+        print(data)
+        raise
         assert len(data) == expected_length
 
         # check dicts are serializeable into there respective models
