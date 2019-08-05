@@ -46,12 +46,14 @@ class TestListResources(object):
         # make sure its valid json
         data = json.loads(response.data)
 
-        print(data)
-        raise
         assert len(data) == expected_length
 
         # check dicts are serializeable into there respective models
         for model_data in data:
+            # the customer model can't intiate with
+            # websites so remove if present
+            if "websites" in model_data:
+                del model_data["websites"]
             model_cls(**model_data)
 
     @pytest.mark.parametrize(
@@ -164,6 +166,10 @@ class TestModelResources(object):
             # make sure its valid json
             data = json.loads(response.data)
 
+            # the customer model can't intiate with
+            # websites so remove if present
+            if "websites" in data:
+                del data["websites"]
             model_cls(**data)
 
     @pytest.mark.parametrize(
@@ -231,6 +237,11 @@ class TestModelResources(object):
         # make sure its valid json
         data = json.loads(response.data)
         assert data == response.json
+
+        # the customer model can't intiate with
+        # websites so remove if present
+        if "websites" in data:
+            del data["websites"]
 
         # check response contains model
         model = model_cls(**data)

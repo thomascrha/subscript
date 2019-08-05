@@ -15,11 +15,5 @@ def test():
     subprocess.run(["tests/run.sh"])
 
 
-@manager.command
-def style():
-    "runs pep8 complance on all the python files in the application"
-    subprocess.run(["pycodestyle --exclude=venv3 ."])
-
-
 if __name__ == '__main__':
     manager.run()

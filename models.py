@@ -26,20 +26,6 @@ class ModelMixin(object):
         return model
 
 
-class CustomerWebsites(ModelMixin, db.Model):
-    customer_id = db.Column(
-        db.Integer,
-        db.ForeignKey('customer.id'),
-        primary_key=True
-    )
-    website_id = db.Column(
-        db.Integer,
-        db.ForeignKey('website.id'),
-        primary_key=True
-    )
-    website = db.relationship("Website")
-
-
 class Plan(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
@@ -102,12 +88,29 @@ class Customer(ModelMixin, db.Model):
         return '<Customer %r>' % self.username
 
 
+class CustomerWebsites(ModelMixin, db.Model):
+    customer_id = db.Column(
+        db.Integer,
+        db.ForeignKey('customer.id'),
+        primary_key=True
+    )
+    website_id = db.Column(
+        db.Integer,
+        db.ForeignKey('website.id'),
+        primary_key=True
+    )
+    website = db.relationship("Website")
+
+
+class CustomerWebsitesSchema(ma.Schema):
+    website = ma.Nested(WebsiteSchema)
+
+
 class CustomerSchema(ma.Schema):
     id = fields.Integer()
     username = fields.String()
     email_address = fields.String()
-    websites = ma.Nested(WebsiteSchema, many=True)
-
+    websites = ma.Nested(CustomerWebsitesSchema, many=True)
 
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
