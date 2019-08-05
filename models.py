@@ -30,7 +30,6 @@ class Customer(ModelMixin, db.Model):
     password = db.Column(db.String(50), nullable=False)
 
     # relationships
-
     plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'), nullable=False)
 
     # simple repr for debugging purposes
@@ -53,11 +52,6 @@ class Plan(ModelMixin, db.Model):
 class Website(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(80), unique=True, nullable=False)
-
-    # relationships
-
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    customer = db.relationship('Customer', backref=db.backref('websites', lazy=True))
 
     # simple repr for debugging purposes
     def __repr__(self):

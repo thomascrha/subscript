@@ -1,7 +1,3 @@
-import datetime
-import pytz
-import os
-
 from models import (
     Customer,
     Website,
@@ -110,7 +106,7 @@ def add_plans(db):
     # Infinite, unlimited websites $249
     plan_3 = Plan.create_and_add(
         id=3,
-        name="single",
+        name="infinite",
         price=249,
         site_allowance=0,
     )
@@ -127,8 +123,8 @@ def add_customers(db):
         username="test-user-1",
         email_address="test-user-1@subscript.com",
         password="12345",
-        plan_id=keys.plan_1_id,
-        websites=keys.website_01_id
+        plan_id=keys.get("plan_1_id"),
+        websites=keys.get("website_1_id")
     )
 
     customer_2 = Customer.create_and_add(

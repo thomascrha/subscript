@@ -10,10 +10,12 @@ from flask_sqlalchemy import SQLAlchemy
 # used for testing suite
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript-test'
 
     db = SQLAlchemy(app)
     api = Api(app)
+
+    return app
 
 
 app = Flask(__name__)
@@ -22,7 +24,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript'
 db = SQLAlchemy(app)
 api = Api(app)
 
-import models
+
 
 # default api resources
 # Customer list resource
