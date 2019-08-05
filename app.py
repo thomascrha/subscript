@@ -6,6 +6,15 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 # application set up and db linking
+
+# used for testing suite
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript'
+
+    db = SQLAlchemy(app)
+    api = Api(app)
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript'
 
@@ -73,7 +82,6 @@ api.add_resource(Customer, "/websites/<int:website_id>", endpoint="website")
 
 api.add_resource(Plans, "/plans", endpoint="plans")
 api.add_resource(Customer, "/plans/<int:plan_id>", endpoint="plan")
-
 
 if __name__ == "__main__":
     app.run(debug=True)

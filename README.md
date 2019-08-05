@@ -30,7 +30,7 @@ Notes :
 
 ## Decisions
 
-* I'm going to use flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API rather than some application
+* I'm going to use flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API
 * Make it REST and keep it Zen
 * Utilise SQLAlchemy for my models and data
 

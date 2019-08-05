@@ -1,8 +1,28 @@
-from app import db
+from app import db 
 from datetime import timedelta
 
+# some helper methods for easily adding models to the db
+class ModelMixin(object):
+    @classmethod
+    def create(cls, **kwargs):
+        """
+        Creates a model.
+        """
+        return cls(**kwargs)
 
-class Customer(db.Model):
+    @classmethod
+    def create_and_add(cls, *args, **kwargs):
+        """
+        Same as the create method but also adds
+        the model to the session.
+        """
+        model = cls.create(*args, **kwargs)
+        db.session.add(model)
+        db.session.flush()
+        return model
+
+
+class Customer(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email_address = db.Column(db.String(120), unique=True, nullable=False)
@@ -13,7 +33,7 @@ class Customer(db.Model):
         return '<Customer %r>' % self.username
 
 
-class Plan(db.Model):
+class Plan(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
@@ -25,7 +45,7 @@ class Plan(db.Model):
         return '<Plan %r>' % self.name
 
 
-class Website(db.Model):
+class Website(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(80), unique=True, nullable=False)
 
