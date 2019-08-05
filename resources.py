@@ -2,6 +2,7 @@ import models
 from flask_restful import Resource
 from flask import jsonify
 
+
 # default api resources
 # Customer list resource
 class Customers(Resource):
@@ -12,6 +13,7 @@ class Customers(Resource):
 
     def post(self):
         pass
+
 
 # Customer resource
 class Customer(Resource):
@@ -30,7 +32,7 @@ class Websites(Resource):
         all_websites = models.Website.query.all()
         result = models.websites_schema.dump(all_websites)
         return jsonify(result.data)
-    
+
     def post(self):
         pass
 
@@ -52,7 +54,7 @@ class Plans(Resource):
         all_plans = models.Plan.query.all()
         result = models.plans_schema.dump(all_plans)
         return jsonify(result.data)
-    
+
     def post(self):
         pass
 

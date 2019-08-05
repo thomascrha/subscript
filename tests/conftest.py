@@ -12,7 +12,7 @@ def app(request):
     ctx.push()
     request.addfinalizer(lambda: ctx.pop())
     return app
-   
+
 
 @pytest.fixture(scope="session")
 def test_client(app):
@@ -20,7 +20,7 @@ def test_client(app):
 
 
 # create a session fixtures to add the sample data to the db before all
-# tests are run 
+# tests are run
 @pytest.fixture(scope="session")
 def sample_data(app):
     return _sample_data
@@ -39,7 +39,7 @@ def createdb(app, request):
     _db.session.commit()
 
     def teardown():
-        # remove the db 
+        # remove the db
         _db.session.rollback()
         _db.session.close()
         _db.session.remove()

@@ -74,7 +74,6 @@ def add_websites(db):
         url="www.youtube.com"
     )
 
-    
     keys.add("website_1_id", website_1.id)
     keys.add("website_2_id", website_2.id)
     keys.add("website_3_id", website_3.id)
@@ -85,8 +84,9 @@ def add_websites(db):
     keys.add("website_8_id", website_8.id)
     keys.add("website_9_id", website_9.id)
 
+
 def add_plans(db):
-    
+
     # Single, 1 website, $49
     plan_1 = Plan.create_and_add(
         id=1,
@@ -110,14 +110,14 @@ def add_plans(db):
         price=249,
         site_allowance=0,
     )
-    
+
     keys.add("plan_1_id", plan_1.id)
     keys.add("plan_2_id", plan_2.id)
     keys.add("plan_3_id", plan_3.id)
-    
+
 
 def add_customers(db):
-    
+
     customer_1 = Customer.create_and_add(
         id=1,
         username="test-user-1",

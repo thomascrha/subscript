@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from app import db, ma
 
+
 # some helper methods for easily adding models to the db
 class ModelMixin(object):
     @classmethod
@@ -40,6 +41,7 @@ class CustomerSchema(ma.Schema):
     class Meta:
         fields = ("id", "username", "email_address", "plan_id")
 
+
 customer_schema = CustomerSchema()
 customers_schema = CustomerSchema(many=True)
 
@@ -55,9 +57,11 @@ class Plan(ModelMixin, db.Model):
     def __repr__(self):
         return '<Plan %r>' % self.name
 
+
 class PlanSchema(ma.Schema):
     class Meta:
         fields = ("id", "name", "price", "site_allowance")
+
 
 plan_schema = PlanSchema()
 plans_schema = PlanSchema(many=True)
@@ -71,9 +75,11 @@ class Website(ModelMixin, db.Model):
     def __repr__(self):
         return '<Website %r>' % self.url
 
+
 class WebsiteSchema(ma.Schema):
     class Meta:
         fields = ("id", "url")
+
 
 website_schema = WebsiteSchema()
 websites_schema = WebsiteSchema(many=True)
