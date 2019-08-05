@@ -10,12 +10,8 @@ from models import (
     Plan,
 )
 
-# mime types
-MIMETYPE_JSON = "application/json"
-
 # status codes
 STATUS_OK = 200
-STATUS_BAD_REQUEST = 400
 STATUS_NOT_FOUND = 404
 
 
@@ -39,7 +35,10 @@ class TestListResources(object):
         # check dicts are serializeable into there respective models
         for model_data in data:
             model = model_cls(**model_data)
-                    
+
+    def test_post(self):
+        pass
+
 
 class TestModelResources(object):
     @pytest.mark.parametrize("endpoint, model_cls, model_id, expected_status", [
@@ -65,10 +64,6 @@ class TestModelResources(object):
             data = json.loads(response.data)
 
             model_cls(**data)
-
-
-    def test_post(self):
-        pass
 
     def test_put(self):
         pass

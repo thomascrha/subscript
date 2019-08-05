@@ -53,7 +53,7 @@ class Plans(Resource):
         result = models.plans_schema.dump(all_plans)
         return jsonify(result.data)
     
-     def post(self):
+    def post(self):
         pass
 
 
