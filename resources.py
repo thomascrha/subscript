@@ -1,6 +1,8 @@
 import models
 from flask_restful import Resource
-from flask import jsonify
+from flask import jsonify, request
+
+from app import db
 
 
 # default api resources
@@ -12,18 +14,48 @@ class Customers(Resource):
         return jsonify(result.data)
 
     def post(self):
-        pass
+        # validate data
+        data = request.get_json()
+        models.CustomerSchema().load(data)
+
+        # add model
+        customer = models.Customer.create_and_add(**data)
+        return models.customer_schema.jsonify(customer)
 
 
 # Customer resource
 class Customer(Resource):
     def get(self, customer_id):
+        # get model
         customer = models.Customer.query.get_or_404(customer_id)
-        result = models.customer_schema.dump(customer)
-        return jsonify(result.data)
+
+        # serialise model
+        return models.customer_schema.jsonify(customer)
 
     def put(self, customer_id):
-        pass
+        # get model
+        customer = models.Customer.query.get_or_404(customer_id)
+
+        data = request.get_json()
+
+        # set values provided
+        if "name" in data:
+            customer.name = data["name"]
+
+        if "email_address" in data:
+            customer.name = data["email_address"]
+
+        if "username" in data:
+            customer.name = data["username"]
+
+        if "plan_id" in data:
+            customer.name = data["plan_id"]
+
+        # update db with object
+        db.session.flush()
+
+        # serialise model
+        return models.customer_schema.jsonify(customer)
 
 
 # Website list resource
@@ -34,18 +66,36 @@ class Websites(Resource):
         return jsonify(result.data)
 
     def post(self):
-        pass
+        # validate data
+        data = request.get_json()
+        models.WebsiteSchema().load(data)
+
+        # add model
+        website = models.Website.create_and_add(**data)
+        return models.website_schema.jsonify(website)
 
 
 # Website resource
 class Website(Resource):
     def get(self, website_id):
         website = models.Website.query.get_or_404(website_id)
-        result = models.website_schema.dump(website)
-        return jsonify(result.data)
+        return models.website_schema.jsonify(website)
 
     def put(self, website_id):
-        pass
+        # get model
+        website = models.Website.query.get_or_404(website_id)
+
+        data = request.get_json()
+
+        # set values provided
+        if "url" in data:
+            website.url = data["url"]
+
+        # update db with object
+        db.session.flush()
+
+        # serialise model
+        return models.website_schema.jsonify(website)
 
 
 # Plan list resource
@@ -56,15 +106,39 @@ class Plans(Resource):
         return jsonify(result.data)
 
     def post(self):
-        pass
+        # validate data
+        data = request.get_json()
+        models.PlanSchema().load(data)
+
+        # add model
+        plan = models.Plan.create_and_add(**data)
+        return models.plan_schema.jsonify(plan)
 
 
 # Plan resource
 class Plan(Resource):
     def get(self, plan_id):
         plan = models.Plan.query.get_or_404(plan_id)
-        result = models.plan_schema.dump(plan)
-        return jsonify(result.data)
+        return models.plan_schema.jsonify(plan)
 
     def put(self, plan_id):
-        pass
+        # get model
+        plan = models.Plan.query.get_or_404(plan_id)
+
+        data = request.get_json()
+
+        # set values provided
+        if "name" in data:
+            plan.name = data["name"]
+
+        if "price" in data:
+            plan.price = data["price"]
+
+        if "site_allowance" in data:
+            plan.site_allowance = data["site_allowance"]
+
+        # update db with object
+        db.session.flush()
+
+        # serialise model
+        return models.plan_schema.jsonify(plan)

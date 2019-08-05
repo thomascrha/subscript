@@ -24,7 +24,7 @@ class ModelMixin(object):
 
 
 class Customer(ModelMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email_address = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
@@ -47,10 +47,11 @@ customers_schema = CustomerSchema(many=True)
 
 
 class Plan(ModelMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     site_allowance = db.Column(db.Integer, nullable=False)
+
     subscription_time = relativedelta(years=1)
 
     # simple repr for debugging purposes
@@ -68,7 +69,7 @@ plans_schema = PlanSchema(many=True)
 
 
 class Website(ModelMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     url = db.Column(db.String(80), unique=True, nullable=False)
 
     # simple repr for debugging purposes

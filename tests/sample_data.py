@@ -6,6 +6,12 @@ from models import (
 
 
 class keys(object):
+
+    # plan_ids - necessary for params in pytest
+    plan_id_1 = 1
+    plan_id_2 = 2
+    plan_id_3 = 3
+
     # dynamic data
     data = {}
 
@@ -89,7 +95,7 @@ def add_plans(db):
 
     # Single, 1 website, $49
     plan_1 = Plan.create_and_add(
-        id=1,
+        id=keys.plan_id_1,
         name="single",
         price=49,
         site_allowance=1,
@@ -97,7 +103,7 @@ def add_plans(db):
 
     # Plus, 3 websites $99
     plan_2 = Plan.create_and_add(
-        id=2,
+        id=keys.plan_id_2,
         name="plus",
         price=99,
         site_allowance=3,
@@ -105,7 +111,7 @@ def add_plans(db):
 
     # Infinite, unlimited websites $249
     plan_3 = Plan.create_and_add(
-        id=3,
+        id=keys.plan_id_3,
         name="infinite",
         price=249,
         site_allowance=0,

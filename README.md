@@ -33,10 +33,14 @@ Notes :
 * I'm going to use flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API
 * Make it REST and keep it Zen
 * Utilise SQLAlchemy for my models and data
+* Utilise pytest instead of pytest
 
 ## Setup
 
+```
 brew install postgresql
 brew service start postgresql 
 createdb subscript
+createdb subscript-test
 env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
+```
