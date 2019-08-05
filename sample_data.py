@@ -127,6 +127,8 @@ def add_customers(db):
         username="test-user-1",
         email_address="test-user-1@subscript.com",
         password="12345",
+        plan_id=keys.plan_1_id,
+        websites=[keys.website_8_id]
     )
 
     customer_2 = Customer.create_and_add(
