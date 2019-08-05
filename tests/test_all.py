@@ -20,10 +20,12 @@ STATUS_NOT_FOUND = 404
 
 
 class TestListResources(object):
-    @pytest.mark.parametrize("endpoint, model, expected_length, expected_status", [
-        ("/customers", Customer, 10, STATUS_OK),
+    @pytest.mark.parametrize("endpoint, model_cls, expected_length, expected_status", [
+        ("/customers", Customer, 6, STATUS_OK),
+        ("/websites", Website, 9, STATUS_OK),
+        ("/plans", Plan, 3, STATUS_OK),
     ])
-    def test_get(self, db, test_client, sample_data, endpoint, model, expected_length, expected_status):
+    def test_get(self, db, test_client, sample_data, endpoint, model_cls, expected_length, expected_status):
         response = test_client.get(endpoint)
 
         # check for expected status
@@ -32,7 +34,11 @@ class TestListResources(object):
         # make sure its valid json
         data = json.loads(response.data)
 
-        print(data)
+        assert len(data) == expected_length
+
+        # check dicts are serializeable into there respective models
+        for model_data in data:
+            model = model_cls(**model_data)
                     
 # customer tests
 class TestCustomerModel(object):

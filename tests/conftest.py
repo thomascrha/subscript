@@ -2,14 +2,18 @@ import sys
 import pytest
 from app import create_app
 from app import db as _db
-
 from sample_data import add_sample_data, keys as _sample_data
 
 
 @pytest.fixture(scope="session")
 def app(request):
-    return create_app()
+    app = create_app("testing")
+    ctx = app.app_context()
+    ctx.push()
+    request.addfinalizer(lambda: ctx.pop())
+    return app
    
+
 @pytest.fixture(scope="session")
 def test_client(app):
     return app.test_client()

@@ -1,6 +1,5 @@
-from app import db, ma 
 from dateutil.relativedelta import relativedelta
-
+from app import db, ma
 
 # some helper methods for easily adding models to the db
 class ModelMixin(object):
@@ -39,7 +38,6 @@ class Customer(ModelMixin, db.Model):
 
 class CustomerSchema(ma.Schema):
     class Meta:
-        # Fields to expose
         fields = ("id", "username", "email_address", "plan_id")
 
 customer_schema = CustomerSchema()
@@ -57,6 +55,13 @@ class Plan(ModelMixin, db.Model):
     def __repr__(self):
         return '<Plan %r>' % self.name
 
+class PlanSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "price", "site_allowance")
+
+plan_schema = PlanSchema()
+plans_schema = PlanSchema(many=True)
+
 
 class Website(ModelMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,3 +70,10 @@ class Website(ModelMixin, db.Model):
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Website %r>' % self.url
+
+class WebsiteSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "url")
+
+website_schema = WebsiteSchema()
+websites_schema = WebsiteSchema(many=True)

@@ -26,7 +26,9 @@ class Customer(Resource):
 # Website list resource
 class Websites(Resource):
     def get(self):
-        return models.Website.query.all()
+        all_websites = models.Website.query.all()
+        result = models.websites_schema.dump(all_websites)
+        return jsonify(result.data)
 
 
 # Website resource
@@ -44,7 +46,9 @@ class Website(Resource):
 # Plan list resource
 class Plans(Resource):
     def get(self):
-        return models.Plan.query.all()
+        all_plans = models.Plan.query.all()
+        result = models.plans_schema.dump(all_plans)
+        return jsonify(result.data)
 
 
 # Plan resource
