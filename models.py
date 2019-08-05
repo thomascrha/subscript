@@ -18,7 +18,7 @@ class Plan(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     site_allowance = db.Column(db.Integer, nullable=False)
-    subscription_time = timedelta(years=1) 
+    # subscription_time = timedelta(years=1) 
 
     # simple repr for debugging purposes
     def __repr__(self):
@@ -37,3 +37,7 @@ class Website(db.Model):
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Website %r>' % self.url
+
+
+if __name__ == "__main__":
+    db.create_all()
