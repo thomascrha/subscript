@@ -12,16 +12,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/subscript'
 db = SQLAlchemy(app)
 api = Api(app)
 
+import models
+
 # default api resources
 # Customer list resource
 class Customers(Resource):
     def get(self):
-        pass
+        return models.Customer.query.all() 
 
 # Customer resource
 class Customer(Resource):
     def get(self, customer_id):
-        pass
+        return models.Customer.query.get_or_404(customer_id) 
         
     def post(self, customer_id):
         pass
@@ -32,12 +34,12 @@ class Customer(Resource):
 # Website list resource
 class Websites(Resource):
     def get(self):
-        pass
+        return models.Website.query.all() 
    
 # Website resource
 class Website(Resource):
     def get(self, website_id):
-        pass
+        return models.Website.query.get_or_404(website_id) 
         
     def post(self, website_id):
         pass
@@ -48,12 +50,12 @@ class Website(Resource):
 # Plan list resource
 class Plans(Resource):
     def get(self):
-        pass
+        return models.Plan.query.all() 
 
 # Plan resource
 class Plan(Resource):
     def get(self, plan_id):
-        pass
+        return models.Plan.query.get_or_404(plan_id) 
         
     def post(self, plan_id):
         pass
