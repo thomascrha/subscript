@@ -25,13 +25,14 @@ class keys(object):
 
         return cls.data[key]
 
+
 def add_sample_data(db):
     add_plans(db)
-    add_customers(db)
     add_websites(db)
+    add_customers(db)
+
 
 def add_websites(db):
-    
     website_1 = Website.create_and_add(
         id=1,
         url="www.google.com"

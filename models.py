@@ -1,5 +1,6 @@
 from app import db 
-from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
 
 # some helper methods for easily adding models to the db
 class ModelMixin(object):
@@ -28,6 +29,10 @@ class Customer(ModelMixin, db.Model):
     email_address = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
 
+    # relationships
+
+    plan_id = db.Column(db.Integer, db.ForeignKey('plan.id'), nullable=False)
+
     # simple repr for debugging purposes
     def __repr__(self):
         return '<Customer %r>' % self.username
@@ -38,7 +43,7 @@ class Plan(ModelMixin, db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
     price = db.Column(db.Float, nullable=False)
     site_allowance = db.Column(db.Integer, nullable=False)
-    # subscription_time = timedelta(years=1) 
+    subscription_time = relativedelta(years=1)
 
     # simple repr for debugging purposes
     def __repr__(self):
