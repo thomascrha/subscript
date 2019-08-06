@@ -2,6 +2,7 @@
 
 ## tl;dr
 
+* python3
 * Used flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API
 * REST and keep it Zen and PEP8
 * Utilised SQLAlchemy for my models and data
@@ -22,7 +23,13 @@ brew service start postgresql
 # createdb
 createdb subscript
 createdb subscript-test
+
+# create an env and install requirements
+# if on mac run this:
 env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
+
+# if not
+pip install -r requirements.txt
 
 ./manage db upgrade
 ```
