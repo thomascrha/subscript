@@ -14,11 +14,16 @@
 ```
 git clone https://github.com/thomascrha/subscript.git
 cd subscript
+
+# install postgres
 brew install postgresql
-brew service start postgresql 
+brew service start postgresql
+
+# createdb
 createdb subscript
 createdb subscript-test
 env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
+
 ./manage db upgrade
 ```
 
