@@ -85,7 +85,6 @@ class CustomerWebsites(Resource):
 
         for website in data["websites"]:
             assert "url" in website
-
             customer.remove_website(website["url"])
 
         return models.customer_schema.jsonify(customer)

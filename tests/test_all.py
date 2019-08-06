@@ -6,6 +6,7 @@ from tests.sample_data import keys as _sample_data
 from models import (
     Customer,
     CustomerSchema,
+    CustomerWebsites,
     Website,
     WebsiteSchema,
     Plan,
@@ -252,15 +253,13 @@ class TestModelResources(object):
 # customer websites resource tests
 class TestCustomerWebsitesResource(object):
     @pytest.mark.parametrize(
-        "endpoint, model_cls, schema_cls, model_id, data, fail, \
-            expected_status",
+        "endpoint, model_id, method, data, fail, expected_status",
         [
-            # fail - plan only allows single website
+            # fail put - plan only allows single website
             (
                 "/customers/{}/websites",
-                Customer,
-                CustomerSchema,
                 1,
+                "put",
                 {
                     "websites": [
                         {
@@ -271,12 +270,11 @@ class TestCustomerWebsitesResource(object):
                 True,
                 None
             ),
-            # fail - website doesn't exist
+            # fail put - website doesn't exist
             (
                 "/customers/{}/websites",
-                Customer,
-                CustomerSchema,
                 3,
+                "put",
                 {
                     "websites": [
                         {
@@ -287,28 +285,83 @@ class TestCustomerWebsitesResource(object):
                 False,
                 STATUS_NOT_FOUND
             ),
+            # success put
+            (
+                "/customers/{}/websites",
+                3,
+                "put",
+                {
+                    "websites": [
+                        {
+                            "url": "www.google.com"
+                        }
+                    ]
+                },
+                False,
+                STATUS_OK
+            ),
+            # fail delete - website doesn't exist
+            (
+                "/customers/{}/websites",
+                1,
+                "delete",
+                {
+                    "websites": [
+                        {
+                            "url": "www.wqenjqw.com"
+                        }
+                    ]
+                },
+                True,
+                None
+            ),
+            # success delete
+            (
+                "/customers/{}/websites",
+                3,
+                "delete",
+                {
+                    "websites": [
+                        {
+                            "url": "www.youtube.com"
+                        }
+                    ]
+                },
+                False,
+                STATUS_OK
+            ),
 
         ]
     )
-    def test_put(
+    def test_put_delete(
         self,
         db,
         sample_data,
         test_client,
         endpoint,
-        model_cls,
-        schema_cls,
+        method,
         model_id,
         data,
         fail,
         expected_status
     ):
         try:
-            response = test_client.put(
-                endpoint.format(model_id),
-                data=json.dumps(data),
-                content_type="application/json"
-            )
+
+            if method == "delete":
+                response = test_client.delete(
+                    endpoint.format(model_id),
+                    data=json.dumps(data),
+                    content_type="application/json"
+                )
+            elif method == "put":
+                response = test_client.put(
+                    endpoint.format(model_id),
+                    data=json.dumps(data),
+                    content_type="application/json"
+                )
+            else:
+                raise SyntaxError("Invalid method {0}".format(method))
+
         except ValueError:
             if fail:
                 assert True
@@ -329,18 +382,119 @@ class TestCustomerWebsitesResource(object):
                 # the customer model can't intiate with
                 # websites so remove if present for validation
                 if "websites" in data:
+                    websites = data["websites"]
                     del data["websites"]
 
                 # check response contains model
-                model = model_cls(**data)
-                # validate data against schema
-                schema_cls().load(model)
+                customer = Customer(**data)
 
-    def test_delete(self):
-        pass
+                # now add the websites to the created model for validation
+                for website in websites:
+                    customer_website = CustomerWebsites(
+                        website_id=website["website"]["id"],
+                        customer_id=data["id"]
+                        )
+
+                    if method == "delete":
+                        assert customer_website not in customer.websites
+                    elif method == "put":
+                        customer.websites.append(customer_website)
+
+                # validate data against schema
+                CustomerSchema().load(customer)
 
 
 # customer plan resource tests
 class TestCustomerPlanResource(object):
-    def test_put(self):
-        pass
+    @pytest.mark.parametrize(
+        "endpoint, model_id, data, fail, expected_status",
+        [
+            # success renew
+            (
+                "/customers/{}/plan",
+                1,
+                {
+                    "type": "renew",
+                    "plan_name": None
+                },
+                False,
+                STATUS_OK
+            ),
+            # success change
+            (
+                "/customers/{}/plan",
+                1,
+                {
+                    "type": "change",
+                    "plan_name": "plus"
+                },
+                False,
+                STATUS_OK
+            ),
+            # fail change - same plan
+            (
+                "/customers/{}/plan",
+                1,
+                {
+                    "type": "change",
+                    "plan_name": "single"
+                },
+                True,
+                None
+            ),
+            # fail change - need to remove some sites to downgrade
+            (
+                "/customers/{}/plan",
+                3,
+                {
+                    "type": "change",
+                    "plan_name": "single"
+                },
+                True,
+                None
+            ),
+        ]
+    )
+    def test_put(
+        self,
+        db,
+        sample_data,
+        test_client,
+        endpoint,
+        model_id,
+        data,
+        fail,
+        expected_status
+    ):
+        try:
+            response = test_client.put(
+                endpoint.format(model_id),
+                data=json.dumps(data),
+                content_type="application/json"
+            )
+
+        except ValueError:
+            if fail:
+                assert True
+            else:
+                assert False
+
+        if expected_status in (STATUS_OK, STATUS_NOT_FOUND):
+            # check for expected status
+            assert response.status_code == expected_status, "endpoint did not \
+                return expected status: status {0}: expected_status {1}"\
+                    .format(response.status_code, expected_status)
+
+            # make sure its valid json
+            data = json.loads(response.data)
+            assert data == response.json
+
+            # the customer model can't intiate with
+            # websites so remove if present
+            if "websites" in data:
+                del data["websites"]
+
+            # check response contains model
+            model = Customer(**data)
+            # validate data against schema
+            CustomerSchema().load(model)

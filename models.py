@@ -108,17 +108,31 @@ class Customer(ModelMixin, db.Model):
         except NoResultFound:
             abort(404)
 
-        customer_website = CustomerWebsites.create_and_add({
+        customer_website = CustomerWebsites.create_and_add(**{
             "website_id": website.id,
-            "plan_id": self.plan_id
+            "customer_id": self.id
         })
 
         self.websites.append(customer_website)
         db.session.flush()
 
     def remove_website(self, website_url):
-        website = Website.query.filter_by(url=website_url).one()
-        self.websites.remove(website.id)
+        # if website doesn't exist return 404
+        try:
+            website = Website.query.filter_by(url=website_url).one()
+        except NoResultFound:
+            abort(404)
+
+        try:
+            customer_website = CustomerWebsites.query.\
+                filter_by(
+                    website_id=website.id,
+                    customer_id=self.id
+                ).one()
+        except NoResultFound:
+            abort(404)
+
+        db.session.delete(customer_website)
         db.session.flush()
 
     def renew_plan(self):
@@ -126,10 +140,13 @@ class Customer(ModelMixin, db.Model):
         db.session.flush()
 
     def change_plan(self, plan_name):
-        plan = Plan.query.filter_by(name=plan_name)
+        try:
+            plan = Plan.query.filter_by(name=plan_name).one()
+        except NoResultFound:
+            abort(404)
 
-        if not plan:
-            raise ValueError("Unknown Plan {0}".format(plan_name))
+        if plan.id == self.plan_id:
+            raise ValueError("You are already on the plan")
         # check new plan is compatible with number of sites
         _allowance = (self.site_allowance - plan.site_allowance) + 1
 
