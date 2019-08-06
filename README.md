@@ -1,5 +1,62 @@
 # subscript
 
+## tl;dr
+
+* Used flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API
+* REST and keep it Zen and PEP8
+* Utilised SQLAlchemy for my models and data
+* Utilised pytest instead of unittest
+* Utilised marshmallow for serialization and validation
+* Set myself a 24 hour limit - which I kept
+
+### Setup
+
+```
+git clone https://github.com/thomascrha/subscript.git
+cd subscript
+brew install postgresql
+brew service start postgresql 
+createdb subscript
+createdb subscript-test
+env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
+./manage db upgrade
+```
+
+###### Run:
+
+```
+./manage.py runserver
+```
+
+###### Tests:
+
+```
+./manage.py test
+```
+
+### Endopoints
+
+content type = `application/json`
+
+* `/customers` GET
+* `/customers/<int:customer_id>` GET POST PUT
+    * POST required data (email_address, name, plan_id, password, username)
+    * PUT data that can be changed (email_address, name, password, username)
+* `/customers/<int:customer_id>/plan` PUT
+    * PUT required data (plan_name)
+* `/customers/<int:customer_id>/websites` PUT DELETE
+    * DELETE required data (website_url)
+    * PUT data that can be changed (website_url)
+* `/websites` GET
+* `/websites/<int:website_id>` GET POST PUT
+    * POST required data (url)
+    * PUT data that can be changed (url)
+* `/plans` GET
+* `/plans/<int:customer_id>` GET POST PUT
+    * POST required data (name, site_allowance, price)
+    * PUT data that can be changed (name, site_allowance, price)
+
+
 ## Brief
 
 Licencing System
@@ -26,21 +83,3 @@ Notes :
     - Infinite, unlimited websites $249
 - Please add automated tests, using unittest
 - Please use plain Python for this test : no framework . Of course any useful libraries can be used
-
-
-## Decisions
-
-* I'm going to use flask, which technically is a 'framework' - if you could call flask one - I have decided to make this an API
-* Make it REST and keep it Zen
-* Utilise SQLAlchemy for my models and data
-* Utilise pytest instead of pytest
-
-## Setup
-
-```
-brew install postgresql
-brew service start postgresql 
-createdb subscript
-createdb subscript-test
-env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pip install -r requirements.txt
-```
